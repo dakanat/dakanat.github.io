@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #25aff4;
+  --color-bg-dark: #101c22;
+  --font-family-display: "Space Grotesk", sans-serif;
+}
+
+/* Pixel borders */
+.pixel-border {
+  box-shadow:
+    -2px 0 0 0 #25aff4,
+    2px 0 0 0 #25aff4,
+    0 -2px 0 0 #25aff4,
+    0 2px 0 0 #25aff4;
+  margin: 2px;
+}
+
+.pixel-border-subtle {
+  box-shadow:
+    -1px 0 0 0 #334155,
+    1px 0 0 0 #334155,
+    0 -1px 0 0 #334155,
+    0 1px 0 0 #334155;
+  margin: 1px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #101c22;
+}
+::-webkit-scrollbar-thumb {
+  background: #25aff4;
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #60c5f7;
+}
+
+/* Animated property for border light rotation */
+@property --border-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* Light bullet traveling along section borders (hover only) */
+.animate-border-pulse {
+  position: relative;
+  transition: box-shadow 0.3s;
+}
+
+.animate-border-pulse:hover {
+  border-color: transparent;
+  box-shadow:
+    0 0 20px rgba(37, 175, 244, 0.15),
+    inset 0 0 20px rgba(37, 175, 244, 0.05);
+}
+
+.animate-border-pulse:hover::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--border-angle),
+    #334155 0%,
+    #334155 55%,
+    transparent 60%,
+    rgba(37, 175, 244, 0.15) 65%,
+    rgba(37, 175, 244, 0.4) 72%,
+    rgba(37, 175, 244, 0.8) 78%,
+    #25aff4 82%,
+    rgba(37, 175, 244, 0.8) 86%,
+    rgba(37, 175, 244, 0.4) 90%,
+    rgba(37, 175, 244, 0.15) 94%,
+    transparent 97%,
+    #334155 100%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  animation: border-rotate 4s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes border-rotate {
+  to {
+    --border-angle: 360deg;
+  }
+}
