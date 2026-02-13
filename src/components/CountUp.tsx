@@ -24,6 +24,8 @@ export default function CountUp({
     const el = ref.current;
     if (!el) return;
 
+    let rafId = 0;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -33,9 +35,9 @@ export default function CountUp({
             const elapsed = now - start;
             const progress = Math.min(elapsed / DURATION_MS, 1);
             setDisplay(Math.round(easeOutCubic(progress) * value));
-            if (progress < 1) requestAnimationFrame(tick);
+            if (progress < 1) rafId = requestAnimationFrame(tick);
           }
-          requestAnimationFrame(tick);
+          rafId = requestAnimationFrame(tick);
         } else if (entry.intersectionRatio === 0) {
           setDisplay(0);
         }
@@ -44,7 +46,10 @@ export default function CountUp({
     );
 
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => {
+      cancelAnimationFrame(rafId);
+      observer.disconnect();
+    };
   }, [value]);
 
   return (
