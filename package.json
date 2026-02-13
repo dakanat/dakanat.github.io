@@ -8,8 +8,9 @@
     "build": "node scripts/fetch-stats.mjs && next build",
     "start": "next start",
     "lint": "eslint src/",
-    "test": "vitest",
-    "test:run": "vitest run"
+    "pretest": "node scripts/ensure-stats.mjs",
+    "test": "node scripts/ensure-stats.mjs && vitest",
+    "test:run": "node scripts/ensure-stats.mjs && vitest run"
   },
   "keywords": [],
   "author": "",
