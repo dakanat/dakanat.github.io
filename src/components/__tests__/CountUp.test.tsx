@@ -66,4 +66,15 @@ describe("CountUp", () => {
     expect(span).toHaveClass("test-class");
     expect(span?.style.color).toBe("red");
   });
+
+  it("cancels animation frame on unmount", () => {
+    const cancelSpy = vi.spyOn(globalThis, "cancelAnimationFrame");
+    vi.spyOn(globalThis, "requestAnimationFrame").mockReturnValue(42);
+    vi.spyOn(performance, "now").mockReturnValue(0);
+
+    const { unmount } = render(<CountUp value={100} />);
+    unmount();
+
+    expect(cancelSpy).toHaveBeenCalledWith(42);
+  });
 });
