@@ -5,12 +5,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/fetch-stats.mjs && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint src/",
-    "pretest": "node scripts/ensure-stats.mjs",
-    "test": "node scripts/ensure-stats.mjs && vitest",
-    "test:run": "node scripts/ensure-stats.mjs && vitest run"
+    "fetch-stats": "node scripts/fetch-stats.mjs",
+    "test": "vitest",
+    "test:run": "vitest run"
   },
   "keywords": [],
   "author": "",

@@ -60,14 +60,20 @@ async function fetchScholar() {
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
+const DEFAULT_STATS = {
+  fetchedAt: "",
+  atcoder: null,
+  scholar: null,
+};
+
 async function main() {
   console.log("Fetching stats...");
-  let stats = {};
+  let stats = { ...DEFAULT_STATS };
 
   // Load existing stats as fallback
   if (existsSync(OUTPUT_PATH)) {
     try {
-      stats = JSON.parse(readFileSync(OUTPUT_PATH, "utf-8"));
+      stats = { ...DEFAULT_STATS, ...JSON.parse(readFileSync(OUTPUT_PATH, "utf-8")) };
     } catch {}
   }
 
@@ -82,8 +88,12 @@ async function main() {
     }
   }
 
+  let atcoderOk = false;
+  let scholarOk = false;
+
   try {
     stats.atcoder = await fetchAtcoder();
+    atcoderOk = true;
     console.log(`  AtCoder rating: ${stats.atcoder.rating} (${stats.atcoder.color})`);
   } catch (err) {
     console.warn(`  AtCoder fetch failed: ${err.message}, using fallback`);
@@ -91,23 +101,22 @@ async function main() {
 
   try {
     stats.scholar = await fetchScholar();
+    scholarOk = true;
     console.log(`  Scholar citations: ${stats.scholar.totalCitations}, h-index: ${stats.scholar.hIndex}`);
   } catch (err) {
     console.warn(`  Scholar fetch failed: ${err.message}, using fallback`);
   }
 
-  stats.fetchedAt = new Date().toISOString();
-  writeFileSync(OUTPUT_PATH, JSON.stringify(stats, null, 2) + "\n");
-  console.log(`Stats written to ${OUTPUT_PATH}`);
+  if (atcoderOk && scholarOk) {
+    stats.fetchedAt = new Date().toISOString();
+    const json = JSON.stringify(stats, null, 2) + "\n";
+    writeFileSync(OUTPUT_PATH, json);
+    console.log(`Stats written to stats.json`);
+  } else {
+    console.warn(`Skipped writing — partial fetch (existing stats.json unchanged)`);
+  }
 }
 
 main().catch((err) => {
   console.error("Fatal error fetching stats:", err);
-  // Don't fail the build — keep existing stats.json if present
-  if (!existsSync(OUTPUT_PATH)) {
-    writeFileSync(
-      OUTPUT_PATH,
-      JSON.stringify({ fetchedAt: new Date().toISOString() }, null, 2) + "\n"
-    );
-  }
 });
