@@ -23,16 +23,16 @@ function truncate(str: string, max: number) {
 }
 
 function StatsSection({ t, locale }: { t: Dictionary; locale: string }) {
-  const atcoder = stats.atcoder as
-    | { rating: number; color: string; username: string }
-    | undefined;
-  const scholar = stats.scholar as
-    | {
-        totalCitations: number;
-        hIndex: number;
-        papers: { title: string; year: number; citations: number }[];
-      }
-    | undefined;
+  const atcoder = stats.atcoder as {
+    rating: number;
+    color: string;
+    username: string;
+  } | null;
+  const scholar = stats.scholar as {
+    totalCitations: number;
+    hIndex: number;
+    papers: { title: string; year: number; citations: number }[];
+  } | null;
 
   if (!atcoder && !scholar) return null;
 
