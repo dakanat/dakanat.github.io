@@ -38,13 +38,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# generated stats
-src/data/stats.json
-
 # local config
 .claude/
 .mcp.json
-CLAUDE.md
 
 # no need to keep
 reference/
