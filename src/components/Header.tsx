@@ -36,15 +36,15 @@ export default function Header({
           &gt; {t.labels.class}: {profile.title.toUpperCase()}
         </p>
       </div>
-      <div className="mt-4 md:mt-0 flex flex-col items-start md:items-end gap-1">
-        <div className="flex items-center gap-3">
+      <div className="mt-4 md:mt-0 w-full md:w-auto flex flex-col items-end gap-1">
+        <div className="flex items-center flex-wrap justify-end gap-x-3 gap-y-1">
           <p className="text-slate-400 font-mono text-sm flex items-center gap-1.5">
             <Mail className="w-3.5 h-3.5 text-primary" />
             {profile.email}
           </p>
           <LanguageSwitcher locale={locale} />
         </div>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap justify-end gap-x-4 gap-y-1">
           {profile.links.map((link) => {
             const Icon = getLinkIcon(link.label);
             return (
