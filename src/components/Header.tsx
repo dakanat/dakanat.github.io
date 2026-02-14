@@ -17,7 +17,15 @@ function getLinkIcon(label: string) {
   }
 }
 
-export default function Header({ t, locale, profile }: { t: Dictionary; locale: string; profile: Profile }) {
+export default function Header({
+  t,
+  locale,
+  profile,
+}: {
+  t: Dictionary;
+  locale: string;
+  profile: Profile;
+}) {
   return (
     <header className="w-full flex flex-col md:flex-row justify-between items-start md:items-center bg-bg-dark/80 backdrop-blur-sm border border-slate-700 p-4 rounded-sm mb-6 animate-border-pulse">
       <div>
@@ -45,7 +53,7 @@ export default function Header({ t, locale, profile }: { t: Dictionary; locale: 
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary hover:text-white text-sm font-bold uppercase tracking-wider transition-colors flex items-center gap-1"
+                className="text-primary hover:text-white text-sm font-bold uppercase tracking-wider transition-colors flex items-center gap-1 whitespace-nowrap"
               >
                 <Icon className="w-3.5 h-3.5" />[{link.label}]
               </a>
