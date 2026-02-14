@@ -7,11 +7,11 @@ const data: CvData = {
     email: "dakanat4201 (at) gmail.com",
     links: [
       { label: "GitHub", url: "https://github.com/dakanat" },
+      { label: "AtCoder", url: "https://atcoder.jp/users/akanat" },
       {
         label: "Google Scholar",
         url: "https://scholar.google.co.jp/citations?user=Bo7YxGAAAAAJ&hl=ja&oi=ao",
       },
-      { label: "AtCoder", url: "https://atcoder.jp/users/akanat" },
     ],
     researchInterests: "Computer Vision, Machine Learning.",
   },
