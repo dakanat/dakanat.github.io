@@ -22,11 +22,10 @@ export default function AnimatedSection({
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-        } else if (entry.intersectionRatio === 0) {
-          setIsVisible(false);
+          observer.unobserve(el);
         }
       },
-      { threshold: [0, 0.1] }
+      { threshold: 0.1 },
     );
 
     observer.observe(el);
