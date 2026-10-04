@@ -5,9 +5,9 @@ import Publications from "@/components/Publications";
 import Awards from "@/components/Awards";
 import InvitedTalks from "@/components/InvitedTalks";
 import Funding from "@/components/Funding";
+import Skills from "@/components/Skills";
 import Footer from "@/components/Footer";
-import Sidebar from "@/components/Sidebar";
-import AnimatedSection from "@/components/AnimatedSection";
+import Playground from "@/components/Playground";
 import { getDictionary, locales } from "@/i18n/dictionaries";
 import { getCvData } from "@/data/cv";
 
@@ -26,56 +26,19 @@ export default async function Home({
   const [t, cv] = await Promise.all([getDictionary(locale), getCvData(locale)]);
 
   return (
-    <>
-      {/* Background Grid */}
-      <div
-        className="fixed inset-0 z-0 opacity-10 pointer-events-none"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, #25aff4 1px, transparent 1px), linear-gradient(to bottom, #25aff4 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
-      />
-      <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 md:py-12 flex flex-col gap-8">
-        <AnimatedSection>
-          <Header t={t} locale={locale} profile={cv.profile} />
-        </AnimatedSection>
-        <div className="flex flex-col lg:flex-row gap-8">
-          <main className="flex-1 space-y-6">
-            <AnimatedSection delay={100}>
-              <Education t={t} education={cv.education} />
-            </AnimatedSection>
-            <AnimatedSection delay={150}>
-              <WorkExperience t={t} workExperience={cv.workExperience} />
-            </AnimatedSection>
-            <AnimatedSection delay={250}>
-              <Publications
-                t={t}
-                publications={cv.publications}
-                domesticConferences={cv.domesticConferences}
-              />
-            </AnimatedSection>
-            <AnimatedSection delay={300}>
-              <Awards t={t} awards={cv.awards} />
-            </AnimatedSection>
-            <AnimatedSection delay={350}>
-              <InvitedTalks t={t} invitedTalks={cv.invitedTalks} />
-            </AnimatedSection>
-            <AnimatedSection delay={450}>
-              <Funding t={t} funding={cv.funding} />
-            </AnimatedSection>
-          </main>
-          <Sidebar
-            t={t}
-            locale={locale}
-            profile={cv.profile}
-            skills={cv.skills}
-          />
-        </div>
-        <AnimatedSection delay={500}>
-          <Footer t={t} />
-        </AnimatedSection>
-      </div>
-    </>
+    <div id="cv" className="relative min-h-screen">
+      <main className="relative z-10 mx-auto flex max-w-[46rem] flex-col gap-12 px-5 pt-14 pb-28">
+        <Header t={t} locale={locale} profile={cv.profile} />
+        <WorkExperience t={t} workExperience={cv.workExperience} />
+        <Publications t={t} publications={cv.publications} domesticConferences={cv.domesticConferences} />
+        <Education t={t} education={cv.education} />
+        <Awards t={t} awards={cv.awards} />
+        <InvitedTalks t={t} invitedTalks={cv.invitedTalks} />
+        <Funding t={t} funding={cv.funding} />
+        <Skills t={t} skills={cv.skills} />
+        <Footer t={t} locale={locale} />
+      </main>
+      <Playground labels={t.play} />
+    </div>
   );
 }

@@ -6,31 +6,37 @@ export type Dictionary = {
     awards: string;
     invitedTalks: string;
     fundingSources: string;
+    skills: string;
   };
   publications: {
     international: string;
     domestic: string;
+    /** "{n}" is replaced with the citation count */
+    citations: string;
   };
   labels: {
     advisor: string;
     and: string;
     in: string;
-    class: string;
-  };
-  sidebar: {
-    stats: string;
-    atcoder: string;
-    profile: string;
-    citations: string;
-    hIndex: string;
     researchInterests: string;
-    skills: string;
-    skillLanguages: string;
-    skillKnowledge: string;
-    updated: string;
+  };
+  skills: {
+    languages: string;
+    knowledge: string;
+    infra: string;
+  };
+  play: {
+    hint: string;
+    stars: string;
+    /** shown briefly when the last star is found */
+    unlocked: string;
+    /** shown briefly when the chest is opened */
+    thanks: string;
   };
   footer: {
     copyright: string;
+    /** "{source}" becomes a link to Semantic Scholar, "{date}" the date the counts were fetched */
+    citationSource: string;
   };
 };
 
@@ -46,3 +52,8 @@ export async function getDictionary(locale: string): Promise<Dictionary> {
 
 export const locales = ["ja", "en"] as const;
 export type Locale = (typeof locales)[number];
+
+/** Japanese for visitors whose browser prefers Japanese, English for everyone else. */
+export function pickLocale(languages: readonly string[]): Locale {
+  return languages[0]?.toLowerCase().startsWith("ja") ? "ja" : "en";
+}

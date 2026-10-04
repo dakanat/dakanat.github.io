@@ -51,8 +51,7 @@ export interface FundingEntry {
 
 export interface SkillEntry {
   label: string;
-  value: number;
-  category: "language" | "knowledge";
+  category: "language" | "knowledge" | "infra";
 }
 
 export interface CvData {

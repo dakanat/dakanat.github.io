@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getDictionary, locales } from "@/i18n/dictionaries";
+import { getDictionary, locales, pickLocale } from "@/i18n/dictionaries";
 
 describe("getDictionary", () => {
   it('returns English dictionary for "en"', async () => {
@@ -36,5 +36,18 @@ describe("getDictionary", () => {
 
   it('locales is ["ja", "en"]', () => {
     expect(locales).toEqual(["ja", "en"]);
+  });
+});
+
+describe("pickLocale", () => {
+  it("picks Japanese when the browser prefers it", () => {
+    expect(pickLocale(["ja-JP", "en-US"])).toBe("ja");
+    expect(pickLocale(["ja"])).toBe("ja");
+  });
+
+  it("picks English otherwise, including when Japanese is only a fallback", () => {
+    expect(pickLocale(["en-US", "ja"])).toBe("en");
+    expect(pickLocale(["fr-FR"])).toBe("en");
+    expect(pickLocale([])).toBe("en");
   });
 });

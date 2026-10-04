@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import Publications from "@/components/Publications";
+import stats from "@/data/stats.json";
 import { makeDictionary, makePublication } from "@/__tests__/helpers/fixtures";
 
 const t = makeDictionary();
@@ -20,7 +21,6 @@ describe("RichMyName highlighting", () => {
     );
     const strong = screen.getByText("Test User");
     expect(strong.tagName).toBe("STRONG");
-    expect(strong.parentElement?.tagName).toBe("U");
   });
 
   it("highlights author name at the beginning", () => {
@@ -120,7 +120,7 @@ describe("Publications component", () => {
         domesticConferences="Domestic text"
       />,
     );
-    const link = screen.getByText("[PDF]");
+    const link = screen.getByText("PDF");
     expect(link).toHaveAttribute("target", "_blank");
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
     expect(link).toHaveAttribute("href", "https://example.com/paper.pdf");
@@ -135,5 +135,19 @@ describe("Publications component", () => {
       />,
     );
     expect(screen.getByText("Domestic conf text here")).toBeInTheDocument();
+  });
+
+  it("shows the citation count from Semantic Scholar when the title matches", () => {
+    const pub = makePublication({
+      title: "Joint Optimization Framework for Learning with Noisy Labels",
+    });
+    render(<Publications t={t} publications={[pub]} domesticConferences="" />);
+    const count = stats.scholar!.papers[0].citations;
+    expect(screen.getByText(`${count} citations`)).toBeInTheDocument();
+  });
+
+  it("shows no citation count for papers missing from the stats", () => {
+    render(<Publications t={t} publications={[makePublication()]} domesticConferences="" />);
+    expect(screen.queryByText(/citations/)).not.toBeInTheDocument();
   });
 });

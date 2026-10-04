@@ -50,13 +50,23 @@ const data: CvData = {
 
   workExperience: [
     {
+      role: "AI Engineer (Contract)",
+      period: "Apr. 2026 – Present",
+      organization: "Sapeet Co., Ltd.",
+      responsibilities: [
+        "Developing a multimodal search system that spans video, audio, images, and text",
+        "Developing a tool that helps draft contracts",
+        "Developing an automated proofreading application",
+      ],
+    },
+    {
       role: "AI R&D Engineer",
       period: "Apr. 2024 – Feb. 2025",
       organization: "R&D / CASTALK Co., Ltd.",
       responsibilities: [
-        "Architected the backend for a real-time voice chat mobile app featuring live-action video",
-        "Implemented RAG applications leveraging Large Language Models (LLMs)",
-        "Led the development of Japanese speech synthesis models",
+        "Built the backend of a real-time voice chat mobile app with live-action video",
+        "Implemented retrieval-augmented generation (RAG) applications using large language models",
+        "Led the design and training of deep-learning models for Japanese speech synthesis",
       ],
     },
     {
@@ -64,9 +74,9 @@ const data: CvData = {
       period: "Apr. 2021 – Oct. 2022",
       organization: "ML team / AI section / R&D / GAME FREAK inc.",
       responsibilities: [
-        "Developed and debugged physics and communication engines",
-        "Spearheaded NLP initiatives using Transformers and engineered a custom reinforcement learning framework",
-        "Orchestrated technical study sessions on ML topics, including generative AI, NLP, and reinforcement learning",
+        "Developed and debugged the physics and networking engines",
+        "Led a Transformer-based NLP project and designed an in-house reinforcement learning framework",
+        "Organized internal study sessions on machine learning, including image generation, NLP, and reinforcement learning",
       ],
     },
     {
@@ -74,7 +84,7 @@ const data: CvData = {
       period: "Aug. 2018 – Sep. 2018",
       organization: "CV team / Preferred Networks, Inc.",
       responsibilities: [
-        "Conducted research on object detection, with a specific focus on addressing class imbalance issues",
+        "Researched the class imbalance problem in object detection",
       ],
     },
   ],
@@ -106,7 +116,7 @@ const data: CvData = {
 
   awards: [
     {
-      title: "The Best Master Thesis Award",
+      title: "Best Master's Thesis Award",
       organization:
         "Department of Information and Communication Engineering, Graduate School of Information Science and Technology, The University of Tokyo",
       year: "2021",
@@ -122,7 +132,7 @@ const data: CvData = {
   invitedTalks: [
     {
       title: "Joint Optimization Framework for Learning with Noisy Labels",
-      venue: "Meeting on Image Recognition and Understanding",
+      venue: "Meeting on Image Recognition and Understanding (MIRU)",
       location: "Sapporo, Japan",
       date: "Aug. 2018",
     },
@@ -137,15 +147,18 @@ const data: CvData = {
     },
   ],
   skills: [
-    { label: "Python", value: 90, category: "language" },
-    { label: "PyTorch", value: 85, category: "language" },
-    { label: "C++", value: 65, category: "language" },
-    { label: "TypeScript", value: 60, category: "language" },
-    { label: "Machine Learning", value: 90, category: "knowledge" },
-    { label: "Computer Vision", value: 85, category: "knowledge" },
-    { label: "NLP", value: 75, category: "knowledge" },
-    { label: "Backend", value: 70, category: "knowledge" },
-    { label: "Speech / Audio", value: 60, category: "knowledge" },
+    { label: "Python", category: "language" },
+    { label: "PyTorch", category: "language" },
+    { label: "C++", category: "language" },
+    { label: "TypeScript", category: "language" },
+    { label: "Machine Learning", category: "knowledge" },
+    { label: "Computer Vision", category: "knowledge" },
+    { label: "NLP", category: "knowledge" },
+    { label: "AWS", category: "infra" },
+    { label: "GCP", category: "infra" },
+    { label: "Azure", category: "infra" },
+    { label: "Docker", category: "infra" },
+    { label: "Terraform", category: "infra" },
   ],
 };
 

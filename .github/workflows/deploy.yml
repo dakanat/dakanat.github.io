@@ -42,6 +42,9 @@ jobs:
 
       - run: pnpm build
 
+      # renders out/cv-ja.pdf and out/cv-en.pdf with the runner's preinstalled Google Chrome
+      - run: pnpm build:pdf
+
       - uses: actions/upload-pages-artifact@v4
         with:
           path: out

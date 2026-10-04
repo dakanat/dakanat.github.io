@@ -32,13 +32,13 @@ describe("LanguageSwitcher", () => {
 
   it("renders non-active locale as a link", () => {
     render(<LanguageSwitcher locale="en" />);
-    const jp = screen.getByText("JP");
-    expect(jp.tagName).toBe("A");
+    const ja = screen.getByText("JA");
+    expect(ja.tagName).toBe("A");
   });
 
   it("replaces locale segment in the URL", () => {
     render(<LanguageSwitcher locale="en" />);
-    const jp = screen.getByText("JP");
-    expect(jp).toHaveAttribute("href", "/ja/some/page");
+    const ja = screen.getByText("JA");
+    expect(ja).toHaveAttribute("href", "/ja/some/page");
   });
 });
