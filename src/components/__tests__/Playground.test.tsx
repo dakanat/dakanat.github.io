@@ -20,4 +20,14 @@ describe("wasReload", () => {
     vi.spyOn(performance, "getEntriesByType").mockReturnValue([]);
     expect(wasReload()).toBe(false);
   });
+
+  it("is false (rather than throwing) where the browser lacks getEntriesByType", () => {
+    const original = performance.getEntriesByType;
+    Object.defineProperty(performance, "getEntriesByType", { value: undefined, configurable: true });
+    try {
+      expect(wasReload()).toBe(false);
+    } finally {
+      Object.defineProperty(performance, "getEntriesByType", { value: original, configurable: true });
+    }
+  });
 });

@@ -11,7 +11,7 @@ let firstMountInDocument = true;
 
 /** Whether this page load was the visitor reloading (rather than following a link or typing the URL). */
 export function wasReload(): boolean {
-  const nav = performance.getEntriesByType?.("navigation")[0] as PerformanceNavigationTiming | undefined;
+  const nav = performance.getEntriesByType?.("navigation")?.[0] as PerformanceNavigationTiming | undefined;
   return nav?.type === "reload";
 }
 
