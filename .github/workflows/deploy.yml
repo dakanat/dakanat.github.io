@@ -12,18 +12,58 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: write # to commit refreshed stats (see below)
-  pages: write
-  id-token: write
+  contents: read
 
 jobs:
-  build-and-deploy:
+  # Monthly (and manual) runs refresh the stats and commit stats.json. Besides keeping the
+  # numbers in the repo current, the commit counts as repository activity, so GitHub does not
+  # disable this scheduled workflow after 60 quiet days. This is the only job with write
+  # access, and it runs no third-party code: fetch-stats uses Node built-ins only.
+  # Pushes made with GITHUB_TOKEN do not trigger workflows, so this cannot loop.
+  refresh-stats:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: node scripts/fetch-stats.mjs
+
+      - name: Commit refreshed stats
+        run: |
+          if git diff --quiet -- src/data/stats.json; then
+            echo "stats.json unchanged"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/stats.json
+          git commit -m "chore(data): refresh AtCoder and Semantic Scholar stats"
+          git pull --rebase
+          git push
+
+  build-and-deploy:
+    needs: refresh-stats
+    # deploy even when refresh-stats was skipped (pushes) or failed (old stats are kept)
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # the branch tip, so a stats commit made by refresh-stats is included
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
 
       - uses: pnpm/action-setup@v4
 
@@ -38,25 +78,9 @@ jobs:
 
       - run: pnpm test:run
 
+      # on pushes this refreshes the stats for the build (no commit); right after
+      # refresh-stats it skips, since the stats are less than a day old
       - run: pnpm fetch-stats
-
-      # On the monthly schedule (and manual runs), commit stats.json when it was refreshed.
-      # Besides keeping the numbers in the repo up to date, the commit counts as repository
-      # activity, so GitHub does not disable this scheduled workflow after 60 quiet days.
-      # Pushes made with GITHUB_TOKEN do not trigger workflows, so this cannot loop.
-      - name: Commit refreshed stats
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-        run: |
-          if git diff --quiet -- src/data/stats.json; then
-            echo "stats.json unchanged"
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/data/stats.json
-          git commit -m "chore(data): refresh AtCoder and Semantic Scholar stats"
-          git pull --rebase
-          git push
 
       - run: pnpm build
 

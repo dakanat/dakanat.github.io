@@ -52,7 +52,7 @@ pnpm build:pdf   # Render out/cv-{ja,en}.pdf from the built site (run after buil
 | `scripts/build-pdf.mjs` | Prints the built CV pages to PDF with headless Chrome (print CSS in `globals.css`) |
 | `next.config.ts` | Next.js config (static export, trailing slashes) |
 | `vitest.config.ts` | Vitest config (jsdom, React plugin, `@` alias) |
-| `.github/workflows/deploy.yml` | CI: lint → test → fetch-stats (monthly/manual runs commit the refreshed stats.json) → build → build:pdf → deploy |
+| `.github/workflows/deploy.yml` | CI: `refresh-stats` (monthly/manual: fetch + commit stats.json, the only job with write access) → `build-and-deploy`: lint → test → fetch-stats → build → build:pdf → deploy |
 
 ## Testing
 
