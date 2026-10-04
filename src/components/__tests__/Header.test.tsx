@@ -93,7 +93,8 @@ describe("Header citations", () => {
 describe("Header hint", () => {
   it("explains near the top that clicking sends the walker there", () => {
     render(<Header t={t} locale="en" profile={makeProfile()} />);
-    expect(screen.getByText(t.play.hint)).toBeInTheDocument();
+    // one copy beside the language switcher (wider screens), one on its own line (phones)
+    expect(screen.getAllByText(t.play.hint)).toHaveLength(2);
   });
 });
 
