@@ -33,9 +33,13 @@ const PIPE_H = 36;
 const SPRING_W = 14;
 const SPRING_H = 12;
 const LADDER_W = 14;
-/** How far from somewhere the walker can already stand a floating structure may be (jump range, with margin). */
-const REACH_X = 200;
-const REACH_Y = 280;
+/**
+ * How far from somewhere the walker can already stand a floating structure may be. Kept inside
+ * what one jump covers under the sideways speed cap: a 240px rise takes ~1.2s in the air, so
+ * even with ~40px between the nearest surface points the needed speed stays under 200px/s.
+ */
+const REACH_X = 160;
+const REACH_Y = 240;
 const LADDER_MIN = 40;
 const LADDER_MAX = 200;
 const LADDER_MAX_TEXT = 0.04; // share of the ladder's strip that may run behind text

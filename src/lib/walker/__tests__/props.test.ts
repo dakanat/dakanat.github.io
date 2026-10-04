@@ -82,9 +82,9 @@ describe("placeProps on a wide page", () => {
     // every block is near a rule, the floor, or another block (structures chain outwards)
     const anchors = [...rules.flatMap((r) => [r.x1, r.x2].map((x) => ({ x, y: r.y }))), ...blocks];
     for (const b of blocks) {
-      const nearFloor = floorY - b.y <= 300;
-      const nearRule = rules.some((r) => Math.max(0, r.x1 - b.x, b.x - r.x2) <= 216 && Math.abs(r.y - b.y) <= 300);
-      const nearBlock = anchors.some((o) => o !== b && Math.abs(o.x - b.x) <= 260 && Math.abs(o.y - b.y) <= 300);
+      const nearFloor = floorY - b.y <= 260;
+      const nearRule = rules.some((r) => Math.max(0, r.x1 - b.x, b.x - r.x2) <= 176 && Math.abs(r.y - b.y) <= 260);
+      const nearBlock = anchors.some((o) => o !== b && Math.abs(o.x - b.x) <= 200 && Math.abs(o.y - b.y) <= 260);
       expect(nearFloor || nearRule || nearBlock).toBe(true);
     }
   });

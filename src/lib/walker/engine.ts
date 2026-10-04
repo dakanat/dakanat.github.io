@@ -209,10 +209,14 @@ export class WalkerEngine {
       const stranded = this.stars.filter((s) => !s.taken && !ok(s));
       if (!stranded.length) return;
       const keep = this.stars.filter((s) => !stranded.includes(s));
-      const moved = placeStars(occ, nav, stranded.length + keep.length, rand, 110, [], reachable).filter(
-        (s) => keep.every((k) => Math.hypot(k.x - s.x, k.y - s.y) >= 110),
+      // prefer spots well apart from the stars that stay, but never end up with fewer stars:
+      // fall back to closer spots, and as a last resort leave a star where it was
+      const fresh = placeStars(occ, nav, stranded.length + keep.length, rand, 110, [], reachable).filter(
+        (s) => keep.every((k) => Math.hypot(k.x - s.x, k.y - s.y) >= 20),
       );
-      this.stars = [...keep, ...moved.slice(0, stranded.length)];
+      const apart = (s: Star) => keep.every((k) => Math.hypot(k.x - s.x, k.y - s.y) >= 110);
+      const replacement = [...fresh.filter(apart), ...fresh.filter((s) => !apart(s))].slice(0, stranded.length);
+      this.stars = [...keep, ...replacement, ...stranded.slice(replacement.length)];
     });
   }
 
