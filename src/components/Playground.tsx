@@ -6,9 +6,26 @@ import { WalkerEngine, normalizeProgress } from "@/lib/walker/engine";
 
 const PROGRESS_KEY = "walker-progress";
 
-/** Progress is kept per browser tab, so switching language (or reloading) carries it over. */
+/** Only the first Playground in a document looks at how the page was loaded (see loadProgress). */
+let firstMountInDocument = true;
+
+/** Whether this page load was the visitor reloading (rather than following a link or typing the URL). */
+export function wasReload(): boolean {
+  const nav = performance.getEntriesByType?.("navigation")[0] as PerformanceNavigationTiming | undefined;
+  return nav?.type === "reload";
+}
+
+/**
+ * Progress is kept per browser tab so that switching language carries it over. Reloading the
+ * page starts over: on the first mount after a reload the saved progress is dropped. Language
+ * switches are client-side navigations within the same document, so they never hit that check.
+ */
 function loadProgress(): { taken: number; opened: boolean } | undefined {
   try {
+    if (firstMountInDocument) {
+      firstMountInDocument = false;
+      if (wasReload()) sessionStorage.removeItem(PROGRESS_KEY);
+    }
     const raw = sessionStorage.getItem(PROGRESS_KEY);
     return raw ? JSON.parse(raw) : undefined;
   } catch {
