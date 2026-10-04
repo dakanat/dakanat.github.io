@@ -26,11 +26,14 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
+          # no pnpm in this job (nothing is installed), so skip setup-node's automatic
+          # pnpm cache, which it enables because package.json has a packageManager field
+          package-manager-cache: false
 
       - run: node scripts/fetch-stats.mjs
 
@@ -56,18 +59,19 @@ jobs:
       contents: read
       pages: write
       id-token: write
+      actions: read # deploy-pages reads the uploaded artifact
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       # the branch tip, so a stats commit made by refresh-stats is included
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.ref_name }}
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
@@ -87,9 +91,9 @@ jobs:
       # renders out/cv-ja.pdf and out/cv-en.pdf with the runner's preinstalled Google Chrome
       - run: pnpm build:pdf
 
-      - uses: actions/upload-pages-artifact@v4
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: out
 
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
