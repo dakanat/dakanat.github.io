@@ -8,7 +8,9 @@
   --color-rule: #2a2f37;
   --color-accent: #3cc8c8;
   --font-sans: var(--font-plex-sans), "Hiragino Sans", "Noto Sans JP", sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  /* Plex Mono has no Japanese glyphs: let 年/月/被引用 etc. fall through to the bundled Plex Sans JP
+     rather than to whatever the system has (CI runners have no CJK font, which broke the PDF) */
+  --font-mono: var(--font-plex-mono), var(--font-plex-sans), ui-monospace, monospace;
 }
 
 html {
