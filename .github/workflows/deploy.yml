@@ -31,6 +31,9 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 22
+          # no pnpm in this job (nothing is installed), so skip setup-node's automatic
+          # pnpm cache, which it enables because package.json has a packageManager field
+          package-manager-cache: false
 
       - run: node scripts/fetch-stats.mjs
 
