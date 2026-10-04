@@ -19,7 +19,7 @@ const en: Dictionary = {
     advisor: "Advisor",
     and: "and",
     in: "in",
-    researchInterests: "Research Interests",
+    researchInterests: "Research",
   },
   skills: {
     languages: "Languages & Frameworks",

@@ -33,6 +33,13 @@ const PIPE_H = 36;
 const SPRING_W = 14;
 const SPRING_H = 12;
 const LADDER_W = 14;
+/**
+ * How far from somewhere the walker can already stand a floating structure may be. Kept inside
+ * what one jump covers under the sideways speed cap: a 240px rise takes ~1.2s in the air, so
+ * even with ~40px between the nearest surface points the needed speed stays under 200px/s.
+ */
+const REACH_X = 160;
+const REACH_Y = 240;
 const LADDER_MIN = 40;
 const LADDER_MAX = 200;
 const LADDER_MAX_TEXT = 0.04; // share of the ladder's strip that may run behind text
@@ -101,14 +108,28 @@ export function placeProps(
   // Grounded ones (stairs, stacks) stand on rules or the floor; floating ones (bridges, steps) sit in open space.
   const structures: { x: number; y: number }[] = [];
   const farFromOthers = (x: number, y: number) => structures.every((st) => Math.hypot(st.x - x, st.y - y) > 160);
-  const tryPlace = (cells: [number, number][], ax: number, baseY: number) => {
+  // Places the walker can already stand on. Floating structures must be within jump range of one,
+  // and each structure placed becomes one too, so the side margins fill in as a connected chain
+  // reaching out from the rules and the floor: nothing gets stranded out of reach on wide screens.
+  const anchors: { x: number; y: number }[] = [];
+  for (const r of [...sorted, { x1: 0, x2: w.W, y: floorY }]) {
+    for (let x = r.x1; x < r.x2; x += 120) anchors.push({ x, y: r.y });
+    anchors.push({ x: r.x2, y: r.y });
+  }
+  const anchored = (x0: number, width: number, top: number) =>
+    anchors.some((a) => Math.max(0, x0 - a.x, a.x - (x0 + width)) <= REACH_X && Math.abs(a.y - top) <= REACH_Y);
+  const tryPlace = (cells: [number, number][], ax: number, baseY: number, needsAnchor = false) => {
     const cols = Math.max(...cells.map(([c]) => c)) + 1;
     const rows = Math.max(...cells.map(([, r]) => r)) + 1;
     const x0 = snap(ax);
     const top = baseY - rows * BLOCK;
+    if (needsAnchor && !anchored(x0, cols * BLOCK, top)) return false;
     if (!isEmptyRect(w, x0 - 8, top - 14, cols * BLOCK + 16, rows * BLOCK + 14)) return false;
     if (overlaps(x0, top, cols * BLOCK, rows * BLOCK, 20) || !farFromOthers(x0, top)) return false;
-    for (const [c, r] of cells) props.push({ type: "block", x: x0 + c * BLOCK, y: baseY - (r + 1) * BLOCK, w: BLOCK, h: BLOCK, bump: 0 });
+    for (const [c, r] of cells) {
+      props.push({ type: "block", x: x0 + c * BLOCK, y: baseY - (r + 1) * BLOCK, w: BLOCK, h: BLOCK, bump: 0 });
+      anchors.push({ x: x0 + c * BLOCK + BLOCK / 2, y: baseY - (r + 1) * BLOCK });
+    }
     structures.push({ x: x0, y: top });
     const topRow = Math.max(...cells.map(([, r]) => r));
     const [tc] = cells.find(([, r]) => r === topRow)!;
@@ -135,11 +156,12 @@ export function placeProps(
     if (tryPlace(maybeMirror(grounded[Math.floor(rand() * grounded.length)], rand), ax, base.y)) n++;
   }
   // the side margins are the emptiest part of the page, so floating structures are denser there
-  const wantFloating = Math.max(5, Math.round(w.H / 200));
-  for (let tries = 0, n = 0; tries < 1200 && n < wantFloating; tries++) {
+  // more of them on wider pages, where the side margins are larger
+  const wantFloating = Math.max(5, Math.round((w.H / 200) * Math.max(1, w.W / 1100)));
+  for (let tries = 0, n = 0; tries < wantFloating * 120 && n < wantFloating; tries++) {
     const ax = 8 + rand() * (w.W - 100);
     const baseY = snap(100 + rand() * (floorY - 160));
-    if (tryPlace(maybeMirror(floating[Math.floor(rand() * floating.length)], rand), ax, baseY)) n++;
+    if (tryPlace(maybeMirror(floating[Math.floor(rand() * floating.length)], rand), ax, baseY, true)) n++;
   }
 
   // springs on structure tops, rules and the floor; landing on one bounces the walker high
@@ -194,6 +216,8 @@ export function placeStars(
   rand: () => number,
   minDist = 110,
   perches: { x: number; y: number }[] = [],
+  /** node indices the walker can get to and back from; stars only go there */
+  allowed?: Set<number>,
 ): Star[] {
   const stars: Star[] = [];
   const fits = (x: number, y: number) =>
@@ -201,8 +225,13 @@ export function placeStars(
   const add = (x: number, y: number) => {
     if (stars.length < count && fits(x, y)) stars.push({ x, y, taken: false, phase: rand() * Math.PI * 2 });
   };
-  for (const p of perches.slice(0, Math.ceil(count * 0.4))) add(p.x, p.y - 12);
-  const order = nav.nodes.map((n) => ({ n, k: rand() })).sort((a, b) => a.k - b.k);
+  const reachable = (x: number, y: number) => {
+    if (!allowed) return true;
+    const n = nav.nodes.find((m) => Math.abs(m.x - x) < 10 && Math.abs(m.y - y) < 4);
+    return !!n && allowed.has(n.i);
+  };
+  for (const p of perches.slice(0, Math.ceil(count * 0.4))) if (reachable(p.x, p.y)) add(p.x, p.y - 12);
+  const order = nav.nodes.filter((n) => !allowed || allowed.has(n.i)).map((n) => ({ n, k: rand() })).sort((a, b) => a.k - b.k);
   for (const { n } of order) add(n.x, n.y - 12);
   return stars;
 }

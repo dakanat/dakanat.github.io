@@ -68,6 +68,28 @@ describe("placeProps", () => {
   });
 });
 
+describe("placeProps on a wide page", () => {
+  it("only floats block structures within jump range of somewhere already standable", () => {
+    // content in the middle third, wide empty margins on both sides
+    const w = createWorld(2400, 2000);
+    const rules = [300, 900, 1500].map((y) => ({ x1: 800, x2: 1600, y }));
+    for (const r of rules) fillRect(w, r.x1, r.y, r.x2 - r.x1, 2, ONEWAY);
+    const floorY = 1990;
+    fillRect(w, 0, floorY, 2400, 10, HARD);
+    const { props } = placeProps(w, rules, floorY, seeded(12));
+    const blocks = props.filter((p) => p.type === "block");
+    expect(blocks.some((b) => b.x < 600 || b.x > 1800)).toBe(true); // the margins do get some
+    // every block is near a rule, the floor, or another block (structures chain outwards)
+    const anchors = [...rules.flatMap((r) => [r.x1, r.x2].map((x) => ({ x, y: r.y }))), ...blocks];
+    for (const b of blocks) {
+      const nearFloor = floorY - b.y <= 260;
+      const nearRule = rules.some((r) => Math.max(0, r.x1 - b.x, b.x - r.x2) <= 176 && Math.abs(r.y - b.y) <= 260);
+      const nearBlock = anchors.some((o) => o !== b && Math.abs(o.x - b.x) <= 200 && Math.abs(o.y - b.y) <= 260);
+      expect(nearFloor || nearRule || nearBlock).toBe(true);
+    }
+  });
+});
+
 describe("placeStars", () => {
   it("places up to the requested number of stars, spaced apart", () => {
     const { w, rules, floorY } = page();

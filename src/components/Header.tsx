@@ -31,7 +31,7 @@ export default function Header({
     <header className="flex flex-col gap-3">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-[1.9rem] font-semibold leading-tight tracking-[0.04em] text-strong">
+          <h1 className="text-[1.9rem] font-semibold leading-tight tracking-[0.04em] whitespace-nowrap text-strong">
             {profile.name}
           </h1>
           <p className="mt-1 text-sm text-muted">{profile.title}</p>
@@ -40,11 +40,15 @@ export default function Header({
           <div className="print:hidden">
             <LanguageSwitcher locale={locale} />
           </div>
-          <p className="max-w-[11.5rem] text-right text-[12px] leading-snug text-muted motion-reduce:hidden print:hidden">
+          <p className="hidden max-w-[11.5rem] text-right text-[12px] leading-snug text-muted motion-reduce:hidden print:hidden sm:block">
             {t.play.hint}
           </p>
         </div>
       </div>
+      {/* on phones the hint gets its own line, so the name keeps one line in every language */}
+      <p className="-mt-1 text-right text-[12px] leading-snug text-muted motion-reduce:hidden print:hidden sm:hidden">
+        {t.play.hint}
+      </p>
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <p className="text-sm">
           <span className="text-muted">{t.labels.researchInterests}: </span>
