@@ -18,7 +18,7 @@ import {
   type Tuft,
 } from "./decor";
 import { rasterize, type CharBox } from "./dom";
-import { buildNav, nearestNode, nearestOnSeg, segAt, type Nav } from "./nav";
+import { buildNav, nearestNode, nearestOnSeg, roundTrip, segAt, type Nav } from "./nav";
 import { placeProps, placeStars, type Prop, type Star } from "./props";
 import {
   drawConfetti,
@@ -172,6 +172,7 @@ export class WalkerEngine {
     this.birds = placeBirds(occ, nav, rand, Math.max(6, Math.round(world.H / 250)));
     reserveSpots(this.birds.map((b) => ({ x: b.homeX, y: b.homeY })), 18, 14);
     this.stars = placeStars(occ, nav, this.total - this.taken, rand, 110, perches);
+    this.scheduleStarCheck(occ, nav, rand);
     reserveSpots(this.stars.map((st) => ({ x: st.x, y: st.y + 8 })), 18, 16);
     this.grass = placeGrass(occ, [...rules, { x1: 0, x2: world.W, y: floorY }], rand);
     reserveSpots(this.grass.map((t) => ({ x: t.x + 3, y: t.y })), 14, 16);
@@ -189,6 +190,30 @@ export class WalkerEngine {
     else settle(this.me, world);
     if (this.reduceMotion) standStill(this.me, this.env());
     this.opts.onStars?.(this.taken, this.total);
+  }
+
+  /**
+   * Insurance that every star can be collected: once the browser is idle (so the rebuild itself
+   * stays fast), work out where the walker can get to and back from, and move any star that is
+   * somewhere else. Floating structures are already placed within jump range, so this rarely
+   * moves anything.
+   */
+  private scheduleStarCheck(occ: World, nav: Nav, rand: () => number) {
+    const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 300));
+    idle(() => {
+      if (this.nav !== nav) return; // rebuilt in the meantime
+      const floor = nav.nodes.reduce<(typeof nav.nodes)[number] | undefined>((a, b) => (!a || b.y > a.y ? b : a), undefined);
+      if (!floor) return;
+      const reachable = roundTrip(this.world!, nav, floor);
+      const ok = (s: Star) => nav.nodes.some((n) => reachable.has(n.i) && Math.abs(n.x - s.x) < 10 && Math.abs(n.y - 12 - s.y) < 4);
+      const stranded = this.stars.filter((s) => !s.taken && !ok(s));
+      if (!stranded.length) return;
+      const keep = this.stars.filter((s) => !stranded.includes(s));
+      const moved = placeStars(occ, nav, stranded.length + keep.length, rand, 110, [], reachable).filter(
+        (s) => keep.every((k) => Math.hypot(k.x - s.x, k.y - s.y) >= 110),
+      );
+      this.stars = [...keep, ...moved.slice(0, stranded.length)];
+    });
   }
 
   private env(): Env {

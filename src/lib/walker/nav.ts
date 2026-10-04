@@ -388,3 +388,32 @@ export function findPath(w: World, nav: Nav, start: NavNode, goal: NavNode, maxE
   return { steps, partial };
 }
 
+
+/**
+ * Nodes the walker can both reach from `root` and get back to `root` from. Stars are only
+ * placed on these, so every star can be collected from wherever the walker is.
+ */
+export function roundTrip(w: World, nav: Nav, root: NavNode): Set<number> {
+  const forward = new Set([root.i]);
+  const back = new Map<number, number[]>();
+  for (const queue = [root]; queue.length; ) {
+    const n = queue.pop()!;
+    for (const e of n.links.concat(jumpsFrom(w, nav, n))) {
+      if (!back.has(e.to.i)) back.set(e.to.i, []);
+      back.get(e.to.i)!.push(n.i);
+      if (forward.has(e.to.i)) continue;
+      forward.add(e.to.i);
+      queue.push(e.to);
+    }
+  }
+  const both = new Set([root.i]);
+  for (const queue = [root.i]; queue.length; ) {
+    const i = queue.pop()!;
+    for (const j of back.get(i) ?? []) {
+      if (both.has(j) || !forward.has(j)) continue;
+      both.add(j);
+      queue.push(j);
+    }
+  }
+  return both;
+}
