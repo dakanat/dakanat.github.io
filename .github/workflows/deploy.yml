@@ -91,9 +91,26 @@ jobs:
       # renders out/cv-ja.pdf and out/cv-en.pdf with the runner's preinstalled Google Chrome
       - run: pnpm build:pdf
 
+      # Publish only if what was built is still the branch tip. If a newer commit has landed in
+      # the meantime, its own run deploys it; this keeps a slow or delayed run (e.g. one that sat
+      # queued) from overwriting the site with older content.
+      - name: Check that this is still the latest commit
+        id: latest
+        run: |
+          built=$(git rev-parse HEAD)
+          tip=$(git ls-remote origin "refs/heads/${GITHUB_REF_NAME}" | cut -f1)
+          if [ -n "$tip" ] && [ "$tip" != "$built" ]; then
+            echo "::notice::Built ${built} but ${GITHUB_REF_NAME} is now at ${tip}; leaving the deploy to that commit's run."
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/upload-pages-artifact@v5
+        if: steps.latest.outputs.deploy == 'true'
         with:
           path: out
 
       - id: deployment
+        if: steps.latest.outputs.deploy == 'true'
         uses: actions/deploy-pages@v5
