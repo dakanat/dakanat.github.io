@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Dictionary } from "@/i18n/dictionaries";
-import { WalkerEngine } from "@/lib/walker/engine";
+import { WalkerEngine, normalizeProgress } from "@/lib/walker/engine";
 
 const PROGRESS_KEY = "walker-progress";
 
@@ -45,12 +45,12 @@ export default function Playground({ labels }: { labels: Dictionary["play"] }) {
     if (new URLSearchParams(window.location.search).has("pdf")) return;
     // ... and with reduced motion the figure just stands there: no counter, no clicks
     const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const initial = loadProgress();
-    const progress = { taken: initial?.taken ?? 0, opened: initial?.opened ?? false };
+    // the same rules as the engine, so the coloured rules never disagree with the chest
+    const progress = normalizeProgress(loadProgress());
     if (progress.opened) root.dataset.colored = "true";
     const show = (text: string) => setToast({ text, id: Date.now() });
     const engine = new WalkerEngine(root, bg, fg, {
-      initial,
+      initial: progress,
       onStars: still
         ? undefined
         : (taken, total) => {

@@ -43,7 +43,16 @@ import { chestSpot, createWalker, respawn, setGoal, settle, standStill, update, 
 import { FH, HARD, S, TEXT, cell, fillRect, seeded, type World } from "./world";
 
 /** Stars to collect before the chest unlocks. */
-const STAR_COUNT = 5;
+export const STAR_COUNT = 5;
+
+/**
+ * Cleans up progress carried over from storage: the star count is clamped, and the chest
+ * only counts as opened if every star was found (so raising STAR_COUNT later relocks it).
+ */
+export function normalizeProgress(p: { taken: number; opened: boolean } | null | undefined) {
+  const taken = Math.min(STAR_COUNT, Math.max(0, Number(p?.taken) || 0));
+  return { taken, opened: !!p?.opened && taken >= STAR_COUNT };
+}
 
 export interface EngineOptions {
   /** called whenever a star is picked up */
@@ -99,10 +108,11 @@ export class WalkerEngine {
   ) {
     this.reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (opts.initial) {
+      const { taken, opened } = normalizeProgress(opts.initial);
       this.total = STAR_COUNT;
-      this.taken = Math.min(STAR_COUNT, Math.max(0, opts.initial.taken));
+      this.taken = taken;
       // already opened earlier: the page is simply in colour, without replaying the reveal
-      this.opened = opts.initial.opened && this.taken >= STAR_COUNT;
+      this.opened = opened;
     }
     this.observer = new ResizeObserver(() => this.scheduleBuild());
     this.observer.observe(root);
