@@ -49,6 +49,16 @@ const data: CvData = {
 
   workExperience: [
     {
+      role: "AI Engineer（業務委託）",
+      period: "2026年4月 – 現在",
+      organization: "株式会社Sapeet",
+      responsibilities: [
+        "動画・音声・画像・テキストを横断して検索できるマルチモーダル検索システムの開発",
+        "契約書の作成を支援するツールの開発",
+        "文章の自動校正アプリケーションの開発",
+      ],
+    },
+    {
       role: "AI R&D Engineer",
       period: "2024年4月 – 2025年2月",
       organization: "R&D / 株式会社CASTALK",
@@ -131,15 +141,18 @@ const data: CvData = {
     },
   ],
   skills: [
-    { label: "Python", value: 90, category: "language" },
-    { label: "PyTorch", value: 85, category: "language" },
-    { label: "C++", value: 65, category: "language" },
-    { label: "TypeScript", value: 60, category: "language" },
-    { label: "機械学習", value: 90, category: "knowledge" },
-    { label: "コンピュータビジョン", value: 85, category: "knowledge" },
-    { label: "自然言語処理", value: 75, category: "knowledge" },
-    { label: "バックエンド", value: 70, category: "knowledge" },
-    { label: "音声 / 音響", value: 60, category: "knowledge" },
+    { label: "Python", category: "language" },
+    { label: "PyTorch", category: "language" },
+    { label: "C++", category: "language" },
+    { label: "TypeScript", category: "language" },
+    { label: "機械学習", category: "knowledge" },
+    { label: "コンピュータビジョン", category: "knowledge" },
+    { label: "自然言語処理", category: "knowledge" },
+    { label: "AWS", category: "infra" },
+    { label: "GCP", category: "infra" },
+    { label: "Azure", category: "infra" },
+    { label: "Docker", category: "infra" },
+    { label: "Terraform", category: "infra" },
   ],
 };
 

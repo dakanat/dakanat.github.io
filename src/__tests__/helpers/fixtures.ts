@@ -94,7 +94,6 @@ export function makeFunding(
 export function makeSkill(overrides: Partial<SkillEntry> = {}): SkillEntry {
   return {
     label: "Python",
-    value: 90,
     category: "language",
     ...overrides,
   };
@@ -111,31 +110,33 @@ export function makeDictionary(
       awards: "Awards",
       invitedTalks: "Invited Talks",
       fundingSources: "Funding Sources",
+      skills: "Skills",
     },
     publications: {
       international: "International",
       domestic: "Domestic",
+      citations: "{n} citations",
     },
     labels: {
       advisor: "Advisor",
       and: "and",
       in: "in",
-      class: "Class",
-    },
-    sidebar: {
-      stats: "Stats",
-      atcoder: "AtCoder",
-      profile: "Profile",
-      citations: "Citations",
-      hIndex: "h-index",
       researchInterests: "Research Interests",
-      skills: "Skills",
-      skillLanguages: "Languages",
-      skillKnowledge: "Knowledge",
-      updated: "Updated",
+    },
+    skills: {
+      languages: "Languages",
+      knowledge: "Knowledge",
+      infra: "Infrastructure",
+    },
+    play: {
+      hint: "Tap anywhere",
+      stars: "Stars",
+      unlocked: "Chest unlocked",
+      thanks: "Thank you",
     },
     footer: {
       copyright: "© 2024",
+      citationSource: "Citation counts from {source} (as of {date}).",
     },
     ...overrides,
   };

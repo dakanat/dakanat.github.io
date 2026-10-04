@@ -35,3 +35,12 @@ describe("WorkExperience", () => {
     expect(container.querySelectorAll("li")).toHaveLength(0);
   });
 });
+
+describe("WorkExperience current role", () => {
+  it("highlights the period of an ongoing role", () => {
+    const entry = makeWorkEntry({ period: "Apr. 2026 – Present" });
+    render(<WorkExperience t={t} workExperience={[entry, makeWorkEntry({ period: "2020 – 2021" })]} />);
+    expect(screen.getByText("Apr. 2026 – Present")).toHaveClass("font-semibold");
+    expect(screen.getByText("2020 – 2021")).not.toHaveClass("font-semibold");
+  });
+});

@@ -1,100 +1,134 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #25aff4;
-  --color-bg-dark: #101c22;
-  --font-family-display: "Space Grotesk", sans-serif;
+  --color-ink: #0e1014;
+  --color-fg: #e6e9ed;
+  --color-strong: #f7f8fa;
+  --color-muted: #9ba3ae;
+  --color-rule: #2a2f37;
+  --color-accent: #3cc8c8;
+  --font-sans: var(--font-plex-sans), "Hiragino Sans", "Noto Sans JP", sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
 }
 
-/* Pixel borders */
-.pixel-border {
-  box-shadow:
-    -2px 0 0 0 #25aff4,
-    2px 0 0 0 #25aff4,
-    0 -2px 0 0 #25aff4,
-    0 2px 0 0 #25aff4;
-  margin: 2px;
+html {
+  color-scheme: dark;
 }
 
-.pixel-border-subtle {
-  box-shadow:
-    -1px 0 0 0 #334155,
-    1px 0 0 0 #334155,
-    0 -1px 0 0 #334155,
-    0 1px 0 0 #334155;
-  margin: 1px;
+a {
+  text-decoration-line: underline;
+  text-decoration-color: #4a515c;
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.2s;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-}
-::-webkit-scrollbar-track {
-  background: #101c22;
-}
-::-webkit-scrollbar-thumb {
-  background: #25aff4;
-  border-radius: 0;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #60c5f7;
+a:hover {
+  text-decoration-color: var(--color-accent);
 }
 
-/* Animated property for border light rotation */
-@property --border-angle {
-  syntax: "<angle>";
-  initial-value: 0deg;
-  inherits: false;
+/* brief notices from the stick figure layer: slide in at the top, then fade away */
+@keyframes walker-toast {
+  0% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  8%,
+  80% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
-/* Light bullet traveling along section borders (hover only) */
-.animate-border-pulse {
-  position: relative;
-  transition: box-shadow 0.3s;
+.walker-toast {
+  animation: walker-toast 4.5s ease forwards;
 }
 
-.animate-border-pulse:hover {
-  border-color: transparent;
-  box-shadow:
-    0 0 20px rgba(37, 175, 244, 0.15),
-    inset 0 0 20px rgba(37, 175, 244, 0.05);
+/* once the walker opens the chest, the section rules light up along with everything else */
+[data-ground] {
+  transition: border-color 1.5s ease 0.4s;
 }
 
-.animate-border-pulse:hover::after {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  padding: 1px;
-  background: conic-gradient(
-    from var(--border-angle),
-    #334155 0%,
-    #334155 55%,
-    transparent 60%,
-    rgba(37, 175, 244, 0.15) 65%,
-    rgba(37, 175, 244, 0.4) 72%,
-    rgba(37, 175, 244, 0.8) 78%,
-    #25aff4 82%,
-    rgba(37, 175, 244, 0.8) 86%,
-    rgba(37, 175, 244, 0.4) 90%,
-    rgba(37, 175, 244, 0.15) 94%,
-    transparent 97%,
-    #334155 100%
-  );
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  animation: border-rotate 4s linear infinite;
-  pointer-events: none;
+#cv[data-colored] [data-ground] {
+  border-color: rgba(60, 200, 200, 0.45);
 }
 
-@keyframes border-rotate {
-  to {
-    --border-angle: 360deg;
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/*
+ * Print (and the PDF export, which renders the page as print): a plain CV on white.
+ * The palette flips through the theme variables, and everything game-like is hidden.
+ */
+@media print {
+  :root {
+    --color-ink: #ffffff;
+    --color-fg: #1d1f23;
+    --color-strong: #000000;
+    --color-muted: #5a6068;
+    --color-rule: #c9cdd3;
+    --color-accent: #0a7c8c;
+  }
+
+  html {
+    color-scheme: light;
+  }
+
+  @page {
+    size: A4;
+    margin: 12mm 14mm;
+  }
+
+  body {
+    font-size: 9.5pt;
+    line-height: 1.45;
+  }
+
+  /* the screen sizes are set in px on purpose; scale the small ones down to match print */
+  main .text-sm,
+  main [class*="text-["] {
+    font-size: 0.95em;
+  }
+
+  h1 {
+    font-size: 18pt !important;
+  }
+
+  header {
+    gap: 0.35rem !important;
+  }
+
+  canvas,
+  [data-walker-ignore] {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+    gap: 0.9rem !important;
+    max-width: none !important;
+  }
+
+  main ul {
+    margin-top: 0.15rem !important;
+  }
+
+  a {
+    text-decoration-color: #9aa0a8;
+  }
+
+  /* keep each entry on one page, and headings with what follows them */
+  section > div > div {
+    break-inside: avoid;
+  }
+
+  h2,
+  h3 {
+    break-after: avoid;
   }
 }

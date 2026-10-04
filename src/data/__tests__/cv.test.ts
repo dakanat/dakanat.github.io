@@ -38,18 +38,18 @@ describe("getCvData", () => {
     }
   });
 
-  it('skills categories are only "language" or "knowledge"', async () => {
+  it("skills categories are language, knowledge or infra", async () => {
     const data = await getCvData("en");
     for (const skill of data.skills) {
-      expect(["language", "knowledge"]).toContain(skill.category);
+      expect(["language", "knowledge", "infra"]).toContain(skill.category);
     }
   });
 
-  it("skills values are in range 0–100", async () => {
-    const data = await getCvData("en");
-    for (const skill of data.skills) {
-      expect(skill.value).toBeGreaterThanOrEqual(0);
-      expect(skill.value).toBeLessThanOrEqual(100);
+  it("lists the current Sapeet role first in both locales", async () => {
+    for (const locale of ["ja", "en"]) {
+      const data = await getCvData(locale);
+      expect(data.workExperience[0].organization).toMatch(/Sapeet/);
+      expect(data.workExperience[0].role).toMatch(/AI Engineer/);
     }
   });
 });

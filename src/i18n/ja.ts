@@ -8,31 +8,33 @@ const ja: Dictionary = {
     awards: "受賞",
     invitedTalks: "招待講演",
     fundingSources: "研究資金",
+    skills: "スキル",
   },
   publications: {
     international: "国際会議",
     domestic: "国内会議",
+    citations: "被引用 {n}",
   },
   labels: {
     advisor: "指導教員",
     and: "・",
     in: "",
-    class: "職種",
-  },
-  sidebar: {
-    stats: "統計",
-    atcoder: "AtCoder",
-    profile: "プロフィール",
-    citations: "被引用数",
-    hIndex: "h指数",
     researchInterests: "研究分野",
-    skills: "スキル",
-    skillLanguages: "言語・フレームワーク",
-    skillKnowledge: "知識",
-    updated: "更新日",
+  },
+  skills: {
+    languages: "言語・フレームワーク",
+    knowledge: "知識",
+    infra: "クラウド・インフラ",
+  },
+  play: {
+    hint: "Click to guide the stick figure.",
+    stars: "集めた星",
+    unlocked: "Chest unlocked ↓",
+    thanks: "Thank you for your time.",
   },
   footer: {
-    copyright: "\u00a9 2026 Daiki Tanaka. All Rights Reserved.",
+    copyright: "© 2026 Daiki Tanaka. All Rights Reserved.",
+    citationSource: "被引用数は {source} のデータです（{date} 時点）。",
   },
 };
 

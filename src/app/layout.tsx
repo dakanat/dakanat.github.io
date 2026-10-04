@@ -1,8 +1,19 @@
 import type { Metadata } from "next";
-import { Space_Grotesk } from "next/font/google";
+import { IBM_Plex_Mono, IBM_Plex_Sans_JP } from "next/font/google";
 import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({ subsets: ["latin"] });
+const plexSans = IBM_Plex_Sans_JP({
+  weight: ["400", "600"],
+  subsets: ["latin"],
+  variable: "--font-plex-sans",
+  preload: false,
+});
+
+const plexMono = IBM_Plex_Mono({
+  weight: ["400", "500"],
+  subsets: ["latin"],
+  variable: "--font-plex-mono",
+});
 
 export const metadata: Metadata = {
   title: "Daiki Tanaka",
@@ -15,10 +26,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className="dark">
-      <body
-        className={`${spaceGrotesk.className} bg-bg-dark text-slate-200 font-display min-h-screen overflow-x-hidden selection:bg-primary selection:text-white`}
-      >
+    <html lang="ja" className={`${plexSans.variable} ${plexMono.variable}`}>
+      <body className="bg-ink text-fg font-sans min-h-screen overflow-x-hidden leading-[1.9] text-[16px] selection:bg-accent selection:text-ink">
         {children}
       </body>
     </html>
