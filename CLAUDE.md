@@ -3,6 +3,7 @@
 ## Dev Commands
 
 ```bash
+bash scripts/setup.sh # Node 22 via mise (if installed) + pnpm install; Orca runs it for new worktrees
 pnpm dev         # Start dev server at localhost:3000
 pnpm build       # Static export to out/
 pnpm lint        # Run ESLint
@@ -50,6 +51,8 @@ pnpm build:pdf   # Render out/cv-{ja,en}.pdf from the built site (run after buil
 | `src/data/stats.json` | AtCoder/Scholar stats (committed, updated via `pnpm fetch-stats`) |
 | `scripts/fetch-stats.mjs` | Fetches AtCoder & Semantic Scholar metrics |
 | `scripts/build-pdf.mjs` | Prints the built CV pages to PDF with headless Chrome (print CSS in `globals.css`) |
+| `orca.yaml` | Orca worktree setup hook (runs `scripts/setup.sh`) |
+| `.worktreeinclude` | Gitignored files copied into new worktrees (`.mcp.json`, `.claude`) by Orca and Claude Code |
 | `next.config.ts` | Next.js config (static export, trailing slashes) |
 | `vitest.config.ts` | Vitest config (jsdom, React plugin, `@` alias) |
 | `.github/workflows/deploy.yml` | CI: `refresh-stats` (monthly/manual: fetch + commit stats.json, the only job with write access) → `build-and-deploy`: lint → test → fetch-stats → build → build:pdf → deploy |
