@@ -1,0 +1,6 @@
+# Orca workspace settings. Gitignored files to copy into new worktrees are listed in
+# .worktreeinclude (also read by Claude Code).
+scripts:
+  setup: bash scripts/setup.sh
+# agents started with a worktree wait for the dependencies, so tests and lint work right away
+setupAgentStartupPolicy: wait-for-setup
