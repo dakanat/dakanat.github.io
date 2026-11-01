@@ -57,6 +57,7 @@ pnpm build:pdf   # Render out/cv-{ja,en}.pdf from the built site (run after buil
 | `vitest.config.ts` | Vitest config (jsdom, React plugin, `@` alias) |
 | `.github/workflows/deploy.yml` | CI: `refresh-stats` (monthly/manual: fetch + commit stats.json, the only job with write access) → `build-and-deploy`: lint → test → fetch-stats → build → build:pdf → deploy |
 | `.github/workflows/check.yml` | CI on pull requests: lint → test → script syntax check → build → build:pdf (no deploy). Keep in step with `build-and-deploy` in `deploy.yml` |
+| `.github/dependabot.yml` | Monthly grouped npm / GitHub Actions version updates (7-day cooldown; `@types/node` majors are bumped by hand with `.node-version`) |
 
 ## Testing
 
