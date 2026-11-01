@@ -1,2 +1,9 @@
+[settings]
+# the Node version lives in .node-version, which the workflows (setup-node) and
+# scripts/setup.sh read too
+idiomatic_version_file_enable_tools = ["node"]
+
 [tools]
-node = "22"
+# Node 25+ ships no corepack, so mise provides pnpm, which switches itself to the exact
+# version in package.json's packageManager. Keep the major the same as packageManager's.
+pnpm = "10"
