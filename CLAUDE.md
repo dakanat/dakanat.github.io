@@ -3,7 +3,7 @@
 ## Dev Commands
 
 ```bash
-bash scripts/setup.sh # Node 22 via mise (if installed) + pnpm install; Orca runs it for new worktrees
+bash scripts/setup.sh # Node (.node-version) via mise (if installed) + pnpm install; Orca runs it for new worktrees
 pnpm dev         # Start dev server at localhost:3000
 pnpm build       # Static export to out/
 pnpm lint        # Run ESLint
@@ -19,8 +19,8 @@ pnpm build:pdf   # Render out/cv-{ja,en}.pdf from the built site (run after buil
 - **Styling:** Tailwind CSS v4
 - **Language:** TypeScript (strict mode)
 - **Testing:** Vitest + React Testing Library (jsdom)
-- **Package manager:** pnpm (via corepack)
-- **Node version:** 22 LTS (pinned via mise)
+- **Package manager:** pnpm (version pinned by `packageManager` in package.json; whichever pnpm runs switches to it)
+- **Node version:** 26 LTS (`.node-version`, read by mise, the workflows and `setup.sh`)
 - **CI/CD:** GitHub Actions → GitHub Pages
 
 ## i18n
@@ -56,6 +56,8 @@ pnpm build:pdf   # Render out/cv-{ja,en}.pdf from the built site (run after buil
 | `next.config.ts` | Next.js config (static export, trailing slashes) |
 | `vitest.config.ts` | Vitest config (jsdom, React plugin, `@` alias) |
 | `.github/workflows/deploy.yml` | CI: `refresh-stats` (monthly/manual: fetch + commit stats.json, the only job with write access) → `build-and-deploy`: lint → test → fetch-stats → build → build:pdf → deploy |
+| `.github/workflows/check.yml` | CI on pull requests: lint → test → script syntax check → build → build:pdf (no deploy). Keep in step with `build-and-deploy` in `deploy.yml` |
+| `.github/dependabot.yml` | Monthly grouped npm / GitHub Actions version updates (7-day cooldown; `@types/node` majors are bumped by hand with `.node-version`) |
 
 ## Testing
 

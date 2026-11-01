@@ -1,0 +1,49 @@
+# Version updates only: grouping, the cooldown and the monthly schedule below do not apply
+# to Dependabot security updates (enabled in the repo settings), which come as their own
+# PRs as soon as an advisory is published.
+version: 2
+
+updates:
+  # pnpm projects use the npm ecosystem (Dependabot reads pnpm-lock.yaml)
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    # Wait before proposing a freshly published version, so a hijacked release is
+    # likely to be caught and pulled before it reaches this repo.
+    cooldown:
+      default-days: 7
+    ignore:
+      # @types/node is bumped by hand together with the Node runtime (.node-version)
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+    groups:
+      # one PR per month for routine bumps
+      npm-minor-and-patch:
+        update-types: [minor, patch]
+      # all majors in one PR, since many of them have to move together
+      # (next/react, vitest/vite/jsdom, eslint/eslint-config-next, ...)
+      npm-major:
+        update-types: [major]
+    commit-message:
+      prefix: chore(deps)
+
+  # Workflows pin actions to commit SHAs (with the version in a comment), so every
+  # release, not only a new major, comes in as a reviewable PR after the cooldown.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 7
+    groups:
+      # one PR per month for routine bumps
+      github-actions-minor-and-patch:
+        update-types: [minor, patch]
+      # majors one PR per action, except these two, which share the uploaded
+      # artifact format and have to move together
+      pages-major:
+        update-types: [major]
+        patterns: [actions/upload-pages-artifact, actions/deploy-pages]
+    commit-message:
+      prefix: ci
