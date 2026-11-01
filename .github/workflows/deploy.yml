@@ -25,10 +25,14 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # the write token is handed to the push below only, not stored in .git/config
+          persist-credentials: false
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
           # no pnpm in this job (nothing is installed), so skip setup-node's automatic
@@ -38,6 +42,8 @@ jobs:
       - run: node scripts/fetch-stats.mjs
 
       - name: Commit refreshed stats
+        env:
+          TOKEN: ${{ github.token }}
         run: |
           if git diff --quiet -- src/data/stats.json; then
             echo "stats.json unchanged"
@@ -47,8 +53,11 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add src/data/stats.json
           git commit -m "chore(data): refresh AtCoder and Semantic Scholar stats"
-          git pull --rebase
-          git push
+          # pass the token as a header (as actions/checkout does), so it never appears in a
+          # URL that git may print
+          auth="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)"
+          git -c http.extraheader="$auth" pull --rebase
+          git -c http.extraheader="$auth" push
 
   build-and-deploy:
     needs: refresh-stats
@@ -63,15 +72,21 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    # headless Chrome in build:pdf can hang; don't hold the pages concurrency group for
+    # the 6-hour default
+    timeout-minutes: 20
     steps:
       # the branch tip, so a stats commit made by refresh-stats is included
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.ref_name }}
+          # nothing here pushes (the repo is public, so ls-remote below needs no auth);
+          # keep the token away from dependency code
+          persist-credentials: false
 
-      - uses: pnpm/action-setup@v6
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
           cache: pnpm
@@ -106,11 +121,11 @@ jobs:
             echo "deploy=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: actions/upload-pages-artifact@v5
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         if: steps.latest.outputs.deploy == 'true'
         with:
           path: out
 
       - id: deployment
         if: steps.latest.outputs.deploy == 'true'
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

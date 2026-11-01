@@ -23,7 +23,8 @@ function getAtcoderColor(rating) {
 }
 
 async function fetchJson(url) {
-  const res = await fetch(url);
+  // a stalled API should fall back to the previous stats, not hold the job
+  const res = await fetch(url, { signal: AbortSignal.timeout(30_000) });
   if (!res.ok) throw new Error(`${url} returned ${res.status}`);
   return res.json();
 }
