@@ -1,18 +1,18 @@
 {
-  "fetchedAt": "2026-10-04T05:51:26.092Z",
+  "fetchedAt": "2026-11-01T04:41:50.421Z",
   "atcoder": {
     "rating": 1230,
     "color": "cyan",
     "username": "akanat"
   },
   "scholar": {
-    "totalCitations": 820,
+    "totalCitations": 827,
     "hIndex": 2,
     "papers": [
       {
         "title": "Joint Optimization Framework for Learning with Noisy Labels",
         "year": 2018,
-        "citations": 816
+        "citations": 824
       },
       {
         "title": "A Novel Perspective for Positive-Unlabeled Learning via Noisy Labels",
