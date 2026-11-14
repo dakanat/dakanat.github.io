@@ -1,6 +1,6 @@
 // Renders the built CV pages (out/) to PDF with headless Chrome: out/cv-ja.pdf and out/cv-en.pdf.
-// Run after `pnpm build`. Chrome is taken from CHROME_PATH or the usual install locations
-// (GitHub's ubuntu-latest runners ship Google Chrome).
+// Run after `pnpm build`. Chrome is taken from CHROME_PATH or the usual install locations on
+// Linux, macOS and Windows (GitHub's ubuntu-latest runners ship Google Chrome).
 import { createServer } from "node:http";
 import { existsSync, readFileSync, renameSync, rmSync, statSync } from "node:fs";
 import { extname, join, dirname } from "node:path";
@@ -20,9 +20,13 @@ function findChrome() {
     "/usr/bin/chromium",
     "/usr/bin/chromium-browser",
     "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    // Windows: Chrome, then Edge (Chromium, preinstalled on desktop Windows)
+    ...["Google/Chrome/Application/chrome.exe", "Microsoft/Edge/Application/msedge.exe"].flatMap((exe) =>
+      ["PROGRAMFILES", "PROGRAMFILES(X86)", "LOCALAPPDATA"].map((v) => process.env[v] && join(process.env[v], exe)),
+    ),
   ];
   const found = candidates.find((p) => p && existsSync(p));
-  if (!found) throw new Error("Chrome not found. Set CHROME_PATH to a Chrome or Chromium binary.");
+  if (!found) throw new Error("Chrome not found. Set CHROME_PATH to a Chrome, Chromium or Edge binary.");
   return found;
 }
 

@@ -4,13 +4,14 @@
 
 ```bash
 bash scripts/setup.sh # Node (.node-version) via mise (if installed) + pnpm install; Orca runs it for new worktrees
+                      # (native Windows: run it from Git Bash; a bare `bash` in PowerShell/cmd may be WSL's)
 pnpm dev         # Start dev server at localhost:3000
 pnpm build       # Static export to out/
 pnpm lint        # Run ESLint
 pnpm test        # Run Vitest in watch mode
 pnpm test:run    # Run tests once (CI)
 pnpm fetch-stats # Fetch AtCoder & Scholar stats → stats.json
-pnpm build:pdf   # Render out/cv-{ja,en}.pdf from the built site (run after build; needs Chrome)
+pnpm build:pdf   # Render out/cv-{ja,en}.pdf from the built site (run after build; needs Chrome (Edge on Windows), or set CHROME_PATH)
 ```
 
 ## Architecture
@@ -51,7 +52,8 @@ pnpm build:pdf   # Render out/cv-{ja,en}.pdf from the built site (run after buil
 | `src/data/stats.json` | AtCoder/Scholar stats (committed, updated via `pnpm fetch-stats`) |
 | `scripts/fetch-stats.mjs` | Fetches AtCoder & Semantic Scholar metrics |
 | `scripts/build-pdf.mjs` | Prints the built CV pages to PDF with headless Chrome (print CSS in `globals.css`) |
-| `orca.yaml` | Orca worktree setup hook (runs `scripts/setup.sh`) |
+| `orca.yaml` | Orca worktree setup hook: runs `scripts/setup.sh` through a git alias, so it uses bash on macOS/Linux/WSL and Git Bash on native Windows (where Orca runs the line with cmd.exe) |
+| `.gitattributes` | Keeps `*.sh` LF on every checkout (bash fails on CRLF) |
 | `.worktreeinclude` | Gitignored files copied into new worktrees (`.mcp.json`, `.claude`) by Orca and Claude Code |
 | `next.config.ts` | Next.js config (static export, trailing slashes) |
 | `vitest.config.ts` | Vitest config (jsdom, React plugin, `@` alias) |
