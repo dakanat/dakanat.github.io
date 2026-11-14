@@ -1,6 +1,10 @@
 # Orca workspace settings. Gitignored files to copy into new worktrees are listed in
 # .worktreeinclude (also read by Claude Code).
 scripts:
-  setup: bash scripts/setup.sh
+  # Orca runs this line with bash on macOS/Linux/WSL but with cmd.exe on native Windows,
+  # where a bare `bash` can be WSL's (C:\Windows\System32\bash.exe). Running the script
+  # through a git alias works in both: git runs `!` aliases with its own shell, which on
+  # Windows is Git for Windows' bash, so scripts/setup.sh runs on Windows itself.
+  setup: git -c "alias.orca-setup=! bash scripts/setup.sh" orca-setup
 # agents started with a worktree wait for the dependencies, so tests and lint work right away
 setupAgentStartupPolicy: wait-for-setup

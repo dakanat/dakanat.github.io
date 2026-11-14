@@ -46,6 +46,9 @@ jobs:
       # running it would pass anyway and only add calls to the external APIs
       - run: for f in scripts/*.mjs; do node --check "$f"; done
 
+      # the Orca worktree setup script is not run in CI, so at least parse it
+      - run: bash -n scripts/setup.sh
+
       - run: pnpm build
 
       # the runner's preinstalled Google Chrome, as in deploy.yml

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Prepares a fresh checkout or worktree: Node (.node-version) and the pnpm dependencies.
 # Orca runs it from orca.yaml when it creates a worktree; it is also fine to run by hand,
-# and to re-run. Kept to bash 3.2 so it works with macOS's /bin/bash.
+# and to re-run. Kept to bash 3.2 so it works with macOS's /bin/bash. On native Windows it
+# runs in Git Bash (see orca.yaml) with the Windows mise, node and pnpm.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
